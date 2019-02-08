@@ -17,11 +17,11 @@ public class Genmesh {
         System.out.println("Enter a command in the following format to produce a .obj file:");
         System.out.println("genmesh -g <sphere|cylinder> [-n <divisionsU>] [-m <divisionsV>] -o <outfile.obj>");
 
-        while(true) {
-            String input = keyboard.nextLine();
-            System.out.println("Input: " + input);
-            System.out.println("Valid: " + parseInput(input));
+        String input = keyboard.nextLine();
+        while(!parseInput(input)) {
+            System.out.println("Invalid input. Please check your command syntax and try again.");
         }
+
     }
 
     /**
