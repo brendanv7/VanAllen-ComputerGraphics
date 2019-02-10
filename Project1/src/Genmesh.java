@@ -1,6 +1,8 @@
 import java.util.Scanner;
 
 /**
+ * Genmesh is a command-line tool used to generate Wavefront OBJ
+ * files for triangle mesh representations of a sphere or cylinder.
  *
  * @author Brendan Van Allen
  * @version Spring 2019
@@ -20,6 +22,11 @@ public class Genmesh {
         String input = keyboard.nextLine();
         while(!parseInput(input)) {
             System.out.println("Invalid input. Please check your command syntax and try again.");
+            input = keyboard.nextLine();
+        }
+
+        if(shape.equalsIgnoreCase("sphere")) {
+            CylinderMesh cm = new CylinderMesh(divisionsU);
         }
 
     }
@@ -50,19 +57,15 @@ public class Genmesh {
                         return false;
                     }
                 } else if (tokens[i].equalsIgnoreCase("-n")) {
-                    try {
-                        divisionsU = Integer.parseInt(tokens[i + 1]);
-                        i++;
-                    } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                    divisionsU = Integer.parseInt(tokens[i + 1]);
+                    i++;
+                    if(divisionsU < 2)
                         return false;
-                    }
                 } else if (tokens[i].equalsIgnoreCase("-m")) {
-                    try {
-                        divisionsV = Integer.parseInt(tokens[i + 1]);
-                        i++;
-                    } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                    divisionsV = Integer.parseInt(tokens[i + 1]);
+                    i++;
+                    if(divisionsV < 2)
                         return false;
-                    }
                 } else if (tokens[i].equalsIgnoreCase("-o")) {
                     if (tokens[i + 1].substring(tokens[i + 1].length() - 4).equals(".obj")) {
                         outFile = tokens[i + 1];
