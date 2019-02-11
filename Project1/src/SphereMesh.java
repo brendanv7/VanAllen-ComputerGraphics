@@ -1,5 +1,3 @@
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -56,6 +54,7 @@ public class SphereMesh {
         for(int i=2;i<divisionsU+1;i++) {
             faces.add("f "+1+"/"+1+"/"+1+" "+i+"/"+i+"/"+i+" "+(i+1)+"/"+(i+1)+"/"+(i+1));
         }
+
         // Last triangles of fans are special case since they connect back to starting vertex
         faces.add("f "+1+"/"+1+"/"+1+" "+(divisionsU+1)+"/"+(divisionsU+1)+"/"+(divisionsU+1)+" "+2+"/"+2+"/"+2);
 
@@ -64,6 +63,7 @@ public class SphereMesh {
         for(int i=startIndex;i<vertices.size()-1;i++) {
             faces.add("f "+vertices.size()+"/"+vertices.size()+"/"+vertices.size()+" "+i+"/"+i+"/"+i+" "+(i+1)+"/"+(i+1)+"/"+(i+1));
         }
+
         // Last triangles of each fan are special case since they connect back to starting vertex
         faces.add("f "+vertices.size()+"/"+vertices.size()+"/"+vertices.size()+" "
                 +(vertices.size()-1)+"/"+(vertices.size()-1)+"/"+(vertices.size()-1)+" "

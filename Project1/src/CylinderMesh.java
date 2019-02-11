@@ -94,6 +94,7 @@ public class CylinderMesh {
             length = Math.sqrt((normX*normX)+(normZ*normZ));
             normals.add(new double[]{normX/length,0,normZ/length});
         }
+        
         // Last two normals of strip are special case since the vertices are shared with the starting triangles
         normX = (vertices.get(divisionsU*2)[0] + vertices.get(divisionsU*2+1)[0] + vertices.get(2)[0])/3;
         normZ = (vertices.get(divisionsU*2)[2] + vertices.get(divisionsU*2+1)[2] + vertices.get(2)[2])/3;
