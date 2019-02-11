@@ -18,30 +18,36 @@ public class Genmesh {
 
     public static void main(String args[]) {
         System.out.println("Welcome to Genmesh");
-        System.out.println("Enter a command in the following format to produce a .obj file:");
-        System.out.println("genmesh -g <sphere|cylinder> [-n <divisionsU>] [-m <divisionsV>] -o <outfile.obj>");
+        while(true) {
+            System.out.println("Enter a command in the following format to produce a .obj file:");
+            System.out.println("genmesh -g <sphere|cylinder> [-n <divisionsU>] [-m <divisionsV>] -o <outfile.obj>");
 
-        String input = keyboard.nextLine();
-        while(!parseInput(input)) {
-            System.out.println("Invalid input. Please check your command syntax and try again.");
-            input = keyboard.nextLine();
+            String input = keyboard.nextLine();
+            while (!parseInput(input)) {
+                System.out.println("Invalid input. Please check your command syntax and try again.");
+                input = keyboard.nextLine();
+            }
+
+            String output = "";
+            if (shape.equalsIgnoreCase("cylinder")) {
+                CylinderMesh cm = new CylinderMesh(divisionsU);
+                output = cm.toString();
+            } else {
+                SphereMesh cm = new SphereMesh(divisionsU, divisionsV);
+                output = cm.toString();
+            }
+            try {
+                FileWriter writer = new FileWriter(outFile, false);
+                writer.write(output);
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Done.");
+
+            outFile = null;
+            shape = null;
         }
-
-        String output = "";
-        if(shape.equalsIgnoreCase("cylinder")) {
-            CylinderMesh cm = new CylinderMesh(divisionsU);
-            output = cm.toString();
-        } else {
-
-        }
-        try {
-            FileWriter writer = new FileWriter(outFile, false);
-            writer.write(output);
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
     }
 
     /**

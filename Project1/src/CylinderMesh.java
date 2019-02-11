@@ -6,28 +6,11 @@ import java.util.ArrayList;
  */
 public class CylinderMesh {
     public final double DEGREES_OF_CIRCLE = 2 * Math.PI; // in Radians because Math.sin and Math.cos use radians
-    private int divisionsU = 32; // Default value set to 32 as per project instructions
-    private double angle;
+    private int divisionsU;
     private static ArrayList<double[]> vertices;
     private static ArrayList<String> faces;
     private static ArrayList<double[]> normals;
     private static ArrayList<double[]> textures;
-
-    /**
-     * Creates a CylinderMesh object with the default
-     * number of U divisions.
-     */
-    public CylinderMesh() {
-        angle = DEGREES_OF_CIRCLE / divisionsU;
-        vertices = new ArrayList<>();
-        faces = new ArrayList<>();
-        normals = new ArrayList<>();
-        textures = new ArrayList<>();
-        this.generateVertices();
-        this.generateTextures();
-        this.generateNormals();
-        this.generateFaces();
-    }
 
     /**
      * Creates a CylinderMesh object with the given number
@@ -37,7 +20,6 @@ public class CylinderMesh {
      */
     public CylinderMesh(int divU) {
         divisionsU = divU;
-        angle = DEGREES_OF_CIRCLE / divisionsU;
         vertices = new ArrayList<>();
         faces = new ArrayList<>();
         normals = new ArrayList<>();
@@ -49,6 +31,7 @@ public class CylinderMesh {
     }
 
     private void generateVertices() {
+        double angle = DEGREES_OF_CIRCLE / divisionsU;
         // Vertex 1 will always be the center of the top circle
         vertices.add(new double[]{0,1,0});
 
