@@ -2,8 +2,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * This program demonstrates how to write characters to a text file.
- * @author www.codejava.net
+ * Writes the Mesh information to a file.
+ * @author Brendan Van Allen (with help from www.codejava.net)
  *
  */
 public class WriteFile {
