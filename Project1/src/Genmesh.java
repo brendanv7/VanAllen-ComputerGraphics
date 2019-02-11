@@ -1,3 +1,5 @@
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 
 /**
@@ -25,8 +27,19 @@ public class Genmesh {
             input = keyboard.nextLine();
         }
 
-        if(shape.equalsIgnoreCase("sphere")) {
+        String output = "";
+        if(shape.equalsIgnoreCase("cylinder")) {
             CylinderMesh cm = new CylinderMesh(divisionsU);
+            output = cm.toString();
+        } else {
+
+        }
+        try {
+            FileWriter writer = new FileWriter(outFile, false);
+            writer.write(output);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
     }
