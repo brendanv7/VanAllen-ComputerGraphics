@@ -3,12 +3,14 @@ import javax.vecmath.Vector3d;
 public class HitRecord {
     private double time;
     private Vector3d normal;
-    private Surface object;
+    private Vector3d point;
+    private Surface surface;
 
-    public HitRecord (double time, Vector3d normal, Surface object) {
+    public HitRecord (double time, Vector3d normal, Vector3d point, Surface surface) {
         this.time = time;
         this.normal = normal;
-        this.object = object;
+        this.point = point;
+        this.surface = surface;
     }
 
     public double getTime() {
@@ -19,7 +21,11 @@ public class HitRecord {
         return normal;
     }
 
-    public Surface getObject() {
-        return object;
+    public Surface getSurface() {
+        return surface;
+    }
+
+    public Vector3d getPoint() {
+        return point;
     }
 }

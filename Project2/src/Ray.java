@@ -23,16 +23,14 @@ public class Ray {
     }
 
     public Vector3d getPointOnRay(double time) {
-        // p = e + td
-
         // Make a copy of the viewpoint and directions vectors so we don't change their state
         Vector3d vp = new Vector3d(viewpoint);
         Vector3d dir = new Vector3d(direction);
 
-        // td
+        // t*d
         dir.scale(time);
 
-        // e + td
+        // e + t*d
         vp.add(dir);
 
         return vp;

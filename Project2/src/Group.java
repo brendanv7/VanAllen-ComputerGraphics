@@ -1,3 +1,5 @@
+import apple.laf.JRSUIConstants;
+
 import java.util.ArrayList;
 
 public class Group implements Surface{
@@ -28,12 +30,13 @@ public class Group implements Surface{
         // Loop through all of the surfaces in the group
         for(Surface s : otherSurfaces) {
             // Get the HitRecord for the surface
-            closestHit = s.hit(vr);
+            HitRecord hit = s.hit(vr);
 
             // Determine if there was actually a hit
-            if(closestHit != null) {
+            if(hit != null) {
                 // If the hit was closer than the current closest, then this hit is now the closest.
-                closestT = Math.min(closestT, closestHit.getTime());
+                closestT = Math.min(closestT, hit.getTime());
+                closestHit = hit;
             }
         }
 

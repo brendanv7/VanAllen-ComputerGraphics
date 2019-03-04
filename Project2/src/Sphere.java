@@ -4,12 +4,12 @@ import java.awt.Color;
 public class Sphere implements Surface{
     private Vector3d center;
     private double radius;
-    private Color color;
+    private Material material;
 
-    public Sphere(Vector3d center, double radius, Color color) {
+    public Sphere(Vector3d center, double radius, Material material) {
         this.center = center;
         this.radius = radius;
-        this.color = color;
+        this.material = material;
     }
 
     @Override
@@ -45,12 +45,13 @@ public class Sphere implements Surface{
             double t2 = ( -(direction.dot(temp)) - Math.sqrt(discriminant)) / direction.dot(direction);
 
             double time = Math.min(t1,t2);
-            // Normal n at point p = 2(p - c)
-            Vector3d normal = vr.getPointOnRay(time); // p
+            Vector3d point = vr.getPointOnRay(time); // p
+            Vector3d normal = vr.getPointOnRay(time);
             normal.sub(center); // p - c
             normal.scale(2); // 2(p - c)
+            normal.normalize();
 
-            hr = new HitRecord(time,normal,this);
+            hr = new HitRecord(time, normal, point,this);
         } else {
             hr = null;
         }
@@ -58,7 +59,7 @@ public class Sphere implements Surface{
         return hr;
     }
 
-    public Color getColor() {
-        return color;
+    public Material getMaterial() {
+        return material;
     }
 }

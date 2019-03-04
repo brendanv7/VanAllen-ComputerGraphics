@@ -4,12 +4,13 @@ import java.awt.*;
  * Represents a 3D scene of Surfaces.
  */
 public class Scene {
-    final Color backgroundColor = Color.BLACK;
+    public final Color BACKGROUND_COLOR = Color.ORANGE;
     private Group surfaces;
-    // light source
+    private Light lightSource;
 
-    public Scene() {
+    public Scene(Light lightSource) {
         surfaces = new Group();
+        this.lightSource = lightSource;
     }
 
     /**
@@ -23,5 +24,9 @@ public class Scene {
 
     public Group getSurfaces() {
         return surfaces;
+    }
+
+    public Light getLightSource() {
+        return lightSource;
     }
 }
