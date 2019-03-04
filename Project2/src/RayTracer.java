@@ -65,13 +65,12 @@ public class RayTracer {
     }
 
     private static Scene createScene() {
-        Light lightSource = new Light(new Vector3d(-2,2,1), Color.WHITE);
+        Light lightSource = new Light(new Vector3d(-5,-3,3), Color.WHITE);
         Scene scene = new Scene(lightSource);
 
-        scene.add(new Sphere(new Vector3d(0,0,2),1, new Material(10,Color.RED)));
-        scene.add(new Sphere(new Vector3d(0,1,2),1, new Material(1000,Color.BLUE)));
-
-
+        scene.add(new Sphere(new Vector3d(-1,0,2),.5, new Material(100,Color.ORANGE)));
+        scene.add(new Sphere(new Vector3d(-1,1,2),.75, new Material(1000,Color.MAGENTA)));
+        scene.add(new Sphere(new Vector3d(-2,2,3), .5, new Material(10000, Color.CYAN)));
 
         return scene;
     }
@@ -139,11 +138,24 @@ public class RayTracer {
                 + (diffuseCo[2] * lightColor[2] * Math.max(0, normal.dot(l))) // diffuse
                 + (specularCo[2] * lightColor[2] * Math.pow(Math.max(0, normal.dot(h)), phongExp))); // specular
 
-        System.out.println(red + " " + green + " " + blue);
+        // Normalize the color values to be in the range (0 - 255)
+        red = normalizeColor(red);
+        green = normalizeColor(green);
+        blue = normalizeColor(blue);
+
         // Now we just need to compute the final color
         Color color = new Color(red, green, blue);
 
         return color.getRGB();
+    }
+
+    /**
+     * Normalizes each component of this color to between [0, 255]
+     *
+     * @return an array of integers containing the normalized RGB values
+     */
+    private static int normalizeColor(int color) {
+        return Math.max(Math.min(color, 255), 0);
     }
 
 }

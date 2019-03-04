@@ -4,7 +4,7 @@ import java.awt.*;
  * Represents a 3D scene of Surfaces.
  */
 public class Scene {
-    public final Color BACKGROUND_COLOR = Color.ORANGE;
+    public final Color BACKGROUND_COLOR = Color.BLACK;
     private Group surfaces;
     private Light lightSource;
 
