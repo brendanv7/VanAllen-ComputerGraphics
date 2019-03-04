@@ -2,6 +2,13 @@ import apple.laf.JRSUIConstants;
 
 import java.util.ArrayList;
 
+/**
+ * Group is simply a collection of Surfaces. Having
+ * all Surfaces in a Scene in a single Group allows
+ * for easier computations of pixel values.
+ *
+ * @author Brendan Van Allen
+ */
 public class Group implements Surface{
     private ArrayList<Surface> otherSurfaces;
 
@@ -9,6 +16,11 @@ public class Group implements Surface{
         otherSurfaces = new ArrayList<>();
     }
 
+    /**
+     * Adds the given Surface to the Group.
+     *
+     * @param s Surface to be added
+     */
     public void add(Surface s) {
         otherSurfaces.add(s);
     }

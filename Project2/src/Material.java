@@ -1,5 +1,11 @@
 import java.awt.*;
 
+/**
+ * A Material represents the material properties
+ * of a Surface.
+ *
+ * @author Brendan Van Allen
+ */
 public class Material {
     private int shininess;
     private Color color;

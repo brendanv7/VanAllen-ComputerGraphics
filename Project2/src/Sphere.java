@@ -1,6 +1,11 @@
 import javax.vecmath.Vector3d;
-import java.awt.Color;
 
+/**
+ * Sphere represents a 3D sphere object that only holds
+ * information about its position, size, and material properties.
+ *
+ * @author Brendan Van Allen
+ */
 public class Sphere implements Surface{
     private Vector3d center;
     private double radius;

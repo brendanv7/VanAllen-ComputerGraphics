@@ -1,5 +1,11 @@
 import javax.vecmath.Vector3d;
 
+/**
+ * Ray is actually a viewing ray to be used to calculate
+ * pixels values for an image.
+ *
+ * @author Brendan Van Allen
+ */
 public class Ray {
     private Vector3d viewpoint;
     private Vector3d direction;
@@ -22,6 +28,12 @@ public class Ray {
         return direction;
     }
 
+    /**
+     * Gets a 3D point that lies on the Ray at t = time
+     *
+     * @param time the time on the Ray where the point is
+     * @return 3D vector representing the point
+     */
     public Vector3d getPointOnRay(double time) {
         // Make a copy of the viewpoint and directions vectors so we don't change their state
         Vector3d vp = new Vector3d(viewpoint);
