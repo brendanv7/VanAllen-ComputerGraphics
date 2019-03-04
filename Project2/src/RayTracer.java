@@ -1,6 +1,7 @@
 import javax.vecmath.Matrix4d;
 import javax.vecmath.Vector3d;
 import javax.imageio.ImageIO;
+import java.awt.*;
 
 /**
  * A rudimentary implementation of the Ray-Tracing algorithm
@@ -23,18 +24,25 @@ public class RayTracer {
     Matrix4d test = new Matrix4d();
 
     public static void main(String args[]) {
-        double[] c = {0,0,0};
-        Sphere test = new Sphere(c,1);
+        // Create the scene
+        Scene scene = createScene();
+        Group surfaces = scene.getSurfaces();
+
+        int[] pixels = new int[WIDTH*HEIGHT];
+        int pixel = 0;
 
         // Iterate through each pixel left to right, then top to bottom
         for(int i=0;i<HEIGHT;i++) {
             for(int j=0;j<WIDTH;j++) {
                 Ray viewRay = computeViewingRay(i,j);
                 // if ray hits an object with t in [0,inf) then
-                    // compute normal vector n
+                if(surfaces.hit(viewRay) != null) {
                     // evaluate shading model and set pixel to the resulting color
-                // else
+                } else {
                     // set pixel to the background color
+                    pixels[pixel] = scene.backgroundColor.getRGB();
+                }
+                pixel++;
             }
         }
     }
@@ -44,6 +52,16 @@ public class RayTracer {
         double v = B + (T - B)*(j + 0.5)/HEIGHT;
         Vector3d direction = new Vector3d(u*U,v*V,-D*W);
         return new Ray(VIEWPOINT,direction);
+    }
+
+    private static Scene createScene() {
+        Scene scene = new Scene();
+        scene.add(new Sphere(new Vector3d(0,0,2),1,Color.RED));
+        scene.add(new Sphere(new Vector3d(0,1,2),1,Color.BLUE));
+
+
+
+        return scene;
     }
 
 }

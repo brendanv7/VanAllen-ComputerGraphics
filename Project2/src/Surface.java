@@ -1,8 +1,6 @@
+import java.awt.Color;
 
+public interface Surface {
 
-public class Surface {
-
-//    public HitRecord hit(Ray vr) {
-//        return null;
-//    }
+    HitRecord hit(Ray vr);
 }
