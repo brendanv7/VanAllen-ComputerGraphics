@@ -47,8 +47,10 @@ public class Group implements Surface{
             // Determine if there was actually a hit
             if(hit != null) {
                 // If the hit was closer than the current closest, then this hit is now the closest.
-                closestT = Math.min(closestT, hit.getTime());
-                closestHit = hit;
+                if(closestT > hit.getTime()) {
+                    closestT = hit.getTime();
+                    closestHit = hit;
+                }
             }
         }
 

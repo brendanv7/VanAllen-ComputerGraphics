@@ -43,7 +43,7 @@ public class Sphere implements Surface{
 
         double discriminant = part1 - part2;
 
-        HitRecord hr; // This is what we will eventually return
+        HitRecord hr = null; // This is what we will eventually return
 
         if(discriminant >= 0) {
             double t1 = ( -(direction.dot(temp)) + Math.sqrt(discriminant)) / direction.dot(direction);
@@ -57,8 +57,6 @@ public class Sphere implements Surface{
             normal.normalize();
 
             hr = new HitRecord(time, normal, point,this);
-        } else {
-            hr = null;
         }
 
         return hr;
