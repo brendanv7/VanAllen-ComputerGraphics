@@ -23,7 +23,7 @@ public class RayTracer {
     public static final int D = 1; // Distance from viewpoint to image plane
     public static final Vector3d U = new Vector3d(1,0,0);
     public static final Vector3d V = new Vector3d(0,1,0);
-    public static final Vector3d W = new Vector3d(0,0,-1);
+    public static final Vector3d W = new Vector3d(0,0,1);
     public static final Vector3d VIEWPOINT = new Vector3d(0,0,0);
 
     public static void main(String args[]) {
@@ -35,7 +35,7 @@ public class RayTracer {
         BufferedImage img = new BufferedImage(WIDTH,HEIGHT,BufferedImage.TYPE_INT_RGB);
 
         // Iterate through each pixel left to right, then top to bottom
-        for(int j=0;j<HEIGHT;j++) {
+        for(int j=HEIGHT-1;j>=0;j--) {
             for(int i=0;i<WIDTH;i++) {
                 Ray viewRay = computeViewingRay(i,j);
                 HitRecord hit = surfaces.hit(viewRay);
@@ -60,11 +60,8 @@ public class RayTracer {
 
     }
 
-    /**
+    /*
      * Helper method to compute the viewing ray for each pixel
-     * @param i current pixel x value
-     * @param j current pixel y value
-     * @return
      */
     private static Ray computeViewingRay(int i, int j) {
         double u = L + (R - L)*(i + 0.5)/WIDTH;
@@ -94,12 +91,13 @@ public class RayTracer {
      * Hard-coded scene
      */
     private static Scene createScene() {
-        Light lightSource = new Light(new Vector3d(0,-3,2), Color.WHITE);
+        Light lightSource = new Light(new Vector3d(0,-4,2), Color.WHITE);
         Scene scene = new Scene(lightSource);
 
-        scene.add(new Sphere(new Vector3d(0,0,2),.5, new Material(1,Color.RED)));
-        scene.add(new Sphere(new Vector3d(1,0,3),.5, new Material(10,Color.MAGENTA)));
-        scene.add(new Sphere(new Vector3d(0,-1,3), .5, new Material(100, Color.DARK_GRAY)));
+        scene.add(new Sphere(new Vector3d(0,0,-2),.5, new Material(1,Color.RED)));
+        scene.add(new Sphere(new Vector3d(1,0,-3),.5, new Material(10,Color.MAGENTA)));
+        scene.add(new Sphere(new Vector3d(0,-1,-3), .5, new Material(100, Color.DARK_GRAY)));
+        scene.add(new Sphere(new Vector3d(-1,0,-3), .5, new Material(1000, Color.BLUE)));
 
         return scene;
     }
@@ -187,10 +185,10 @@ public class RayTracer {
             blue = 255;
         }
 
+        // Convert these to int values
         int redInt = (int) Math.round(red);
         int greenInt = (int) Math.round(green);
         int blueInt = (int) Math.round(blue);
-        System.out.println(redInt + " " + greenInt + " "+ blueInt);
 
         // Now we just need to compute the final color
         Color color = new Color(redInt, greenInt, blueInt);
