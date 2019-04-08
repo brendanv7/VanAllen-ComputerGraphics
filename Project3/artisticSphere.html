@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>WebGL / GLSL - Simple Uniform Shading</title>
+    <meta charset="utf-8"/>
+    <script id="vertex-shader" type="x-shader/x-vertex">
+attribute vec4 vPosition;
+attribute vec4 vNormal;
+
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+
+varying vec4 fColor;
+
+void main() {
+    vec3 pos = (modelViewMatrix * vPosition).xyz;
+    vec3 N = normalize( (modelViewMatrix*vNormal).xyz);
+
+    // Warm light source
+    vec3 L = normalize(vec3(1.0,0.0,0.0));
+
+    float warmth = (1.0 + dot(N,L)) / 2.0;
+
+    vec4 warmColor = vec4(0.7,0.5,0.5,1.0);
+    vec4 coolColor = vec4(0.3,0.3,0.6,1.0);
+
+    fColor = warmth * warmColor + (1.0 - warmth) * coolColor;
+
+    gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+}
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+precision mediump float;
+
+varying vec4 fColor;
+
+void main() {
+    gl_FragColor = fColor;
+}
+    </script>
+  </head>
+  <body>
+    <p> </p>
+    <button id = "Button0">Increase R</button>
+    <button id = "Button1">Decrease R</button>
+
+    <p> </p>
+    <button id = "Button2">Increase theta</button>
+    <button id = "Button3">Decrease theta</button>
+    <button id = "Button4">Increase phi</button>
+    <button id = "Button5">Decrease phi</button>
+
+    <p> </p>
+    <button id = "Button6">Increase Subdivisions</button>
+    <button id = "Button7">Decrease Subdivisions</button>
+
+    <p></p>
+
+    <script type="text/javascript" src="Common/webgl-utils.js"></script>
+    <script type="text/javascript" src="Common/initShaders.js"></script>
+    <script type="text/javascript" src="Common/MV.js"></script>
+    <script type="text/javascript" src="sphere.js"></script>
+
+    <canvas id="gl-canvas" width="720" height="720">
+      Oops ... your browser doesn't support the HTML5 canvas element
+    </canvas>
+  </body>
+</html>
+
