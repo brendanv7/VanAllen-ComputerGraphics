@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WebGL / GLSL - Simple Bump Mapping</title>
+    <meta charset="utf-8"/>
+  </head>
+
+  <body style="background-color: grey">
+    <div style="width: 70%; margin-left: 15%; padding: 10px; background-color: beige">
+      <center>
+        <h1> Ray-Tracing </h1>
+        <h3> Tutorial by Brendan Van Allen</h2>
+      </center>
+      <hr>
+      <br>
+      <h2> What is Ray-Tracing? </h2>
+      <p> In order to view objects and scenes created in a graphics application, they must be rendered to an image as viewed from a certain viewpoint. The process of rendering can be done in a variety of ways, and these techniques all have their own benefits and shortcomings. <b>Ray-tracing</b> is one of the most simple and effective methods of rendering, and creates images with a high degree of visual realism. High quality comes at a high computational cost, so this approach works well for still-images, but is not particularly suited for real-time applications.</p>
+
+      <h2> How does it work? </h2>
+      <p> Ray-tracing is an image-order algorithm, which means that it generates the image pixel-by-pixel. For each pixel, a direct line is calculated that starts at the viewpoint and goes through the center of the pixel. This step is referred to as <b>ray generation</b> because the direct lines are actually vectors known as <b>rays</b>.</p> 
+      <p>Once the ray is generated, it can be used to determine which objects in the scene should effect the pixel. <b>Ray-object intersection</b> is the aptly-named process of calculating all of the intersections with objects that occur along the ray. If more than one object intersects the ray, the one that intersects closest to the viewpoint is to chosen. Any objects that do not intersect the ray are ignored, and if no objects intersect the ray, the pixel is set the background color of the scene. </p> 
+      <p>Once it is determined that an object intersects the ray and it is the closest intersection to the viewpoint, the final step is <b>shading</b>. Shading is the process of calculating the color value of the pixel using a chosen shading function. The shading function takes as its input the material properties of the object determined by ray-object intersection, applies some calculations concerning lighting, reflection, shadows, etc., and outputs an RGB color value for the pixel. The shading function we will be using in this tutorial is the <b>Blinn-Phong shading model</b> and is discussed in more detail later on.</p>
+
+      <h2> See for yourself </h2>
+
+      <center>
+        <img id="tutorial" src="Images/1.png">
+        <br>
+        <button onclick="lastPic()">Previous</button>
+        <button onclick="nextPic()">Next</button>
+        <br>
+      </center>
+      <p id="description"></p>
+
+      <div id="8quizDiv">
+        <input type="radio" id="cube" name="8quiz" onclick="displayRight()">
+        <label id="cubeLab" for="cube"> Orange Cube </label>
+        <input type="radio" id="cyl" name="8quiz" onclick="displayWrong()">
+        <label id="cylLab" for="cyl"> Green Cylinder </label>
+        <p id="8answer"></p>
+      </div>
+  
+      <br>
+      <p> Note: This example is for visual purposes. In a real ray-tracer, these steps are done completely for each pixel in turn, whereas this example depicts each step occurring for all pixels, then going to the next step. </p>
+
+      <h2> The Algorithm </h2>
+      <p> The basic algorithm for ray-tracing is as follows: </p>
+      <div name="code" style="background-color: white; width: 70%">
+        <p style="font-family: monospace; font-size: 16px"> for each pixel: </p> 
+        <p style="font-family: monospace; font-size: 16px"> &nbsp;&nbsp;compute viewing ray</p> 
+        <p style="font-family: monospace; font-size: 16px"> &nbsp;&nbsp;find first object hit by the ray and the surface normal at that point</p>
+        <p style="font-family: monospace; font-size: 16px"> &nbsp;&nbsp;compute pixel color using object color, light, and surface normal</p>
+      </div>
+
+      <h3> Compute viewing ray </h3>
+      <p> The process of computing viewing rays is fairly simple. Previously, we said that rays are simply vectors, but this isn't exactly true. Vectors have a magnitude and direction, but they have no concept of an origin point. Rays need to have an origin point (the viewpoint for our purposes) and a direction. In practice, these are both usually represented as their own vectors, one for the origin point and one for the direction. Magnitude is not a factor of rays because they extend infinitely. </p>
+      <p> There are different kinds of views that can be used to produce an image. We will use perspective view because it is one of the most common, and easiest to understand. Essentially, a perspective view means that all rays have the same origin (the viewpoint). For most renderings, the viewpoint is given as a parameter, so we do not have to calculate it ourselves. </p>
+      <p> Now that have determined the origin for our rays, we just need to calculate their directions. To do this, we need the coordinates of the current pixel, translated to UV coordinates (position in world space). This assumes that we have the dimensions of our image plane (top, bottom, left, right), and our resolution (W x H). With this information the UV coordinates of the pixel with coordinates (i, j) can be calculated as so:</p>
+      <div name="code" style="background-color: white; width: 45%">
+          <p style="font-family: monospace; font-size: 16px"> <i>u</i> = left + (right − left) * (i + 0.5) / W </p> 
+          <p style="font-family: monospace; font-size: 16px"> <i>v</i> = bottom + (top − bottom) * (j + 0.5) / H </p> 
+      </div>
+      <p> With the UV coordinates calculated, theres just one last step to compute the ray's direction. For this step we need the distance between the viewpoint and image plane, represented as <i>d</i>, and the 3 basis vectors for our scene. These are usually given, so don't worry about having to calculate them. With <i>d</i>, our 3 basis vectors <b>u</b>, <b>v</b>, <b>w</b>, and our UV coordinates calculated in the last step, the ray's direction can be computed as so: </p>
+      <div name="code" style="background-color: white; width: 25%">
+          <p style="font-family: monospace; font-size: 16px"> direction = -<i>d</i><b>w</b> + <i>u</i><b>u</b> + <i>v</i><b>v</b></p> 
+      </div>
+
+      <h3> Find first object hit by the ray</h3>
+      <p> With our ray computed, we now have to see if it hits any objects in our scene. We will be using the ray in the following form: </p>
+      <div name="code" style="background-color: white; width: 6%">
+          <p style="font-family: monospace; font-size: 16px"> <b>e</b> + <i>t</i><b>d</b> </p> 
+      </div>
+      <p> where <b>e</b> is the vector representing the ray's origin, and <b>d</b> is the vector representing the ray's direction. <i>t</i> is the <i>time</i> along the ray where the intersection occurs. </p>
+      <p> An important thing to note is that different types of objects require different formulas to determine if and where an intersection occurs with it. We will discuss ray-sphere intersection in this tutorial, but other shapes and objects will not work with these formulas.</p>
+      <h4> Ray-sphere intersection </h4>
+      <p> Given a sphere with radius <i>R</i> and center <b>c</b>, the time(s) <i>t</i> along the ray where the sphere intersects is given by:</p>
+      <img src="Images/raysphere.png" width="600" height="100"></img>
+      <p> You might have noticed that this is a quadratic equations and may produce two seperate results. If there are two results, then the ray entered the sphere at one <i>t</i> and exited at the other. We want the <i>t</i> that is closest to the viewpoint (the lesser of the two). If there is exactly 1 result, the ray grazes the sphere, touching it at only one point. If there are no results, then the ray and sphere do not intersect at all. </p>
+      <p> Once we determine the closest object intersected by the ray, we save the object's material properties and surface normal at the point of intersection. This information will be used in the shader. </p>
+      <p> Note: The term under the square root sign is referred to as the <i>discriminant</i>. This can be used to determine if there are any results prior to calculating the entire equation. If the discriminant is undefined, then there are no intersections and we can move one without attempting to calculate <i>t</i> values. </p>
+
+      <h3>Compute pixel color</h3>
+      <p> With the material properties and surface normal of the intersected object determined, we can plug these values into a shading model to produce our pixel color. As mentioned earlier, we will be using the Blinn-Phong shading model. This model adds 3 types of color together to produce the final color for the pixel: ambient, diffuse, and specular. Each type deals with a different kind of light that can illuminate the objects. </p>
+      <hr>
+      <p> Ambient: Assumes there is equal light coming from every direction (ensures that surfaces receiving no actual light are not colored completely black):</p>
+      <img src="Images/ambient.png" width="70" height="40"></img>
+      <p> <i>k</i> represents the color of the object, and <i>I</i> represents the color of ambient light (usually a neutral like white)</p>
+      <hr>
+      <p> Diffuse: Light from a light source in the scene</p>
+      <img src="Images/diffuse.png" width="180" height="40"></img>
+      <p> <i>k</i> represents the color of the object, <i>I</i> is the color of the light source, and max(0, <b>n</b>·<b>l</b>) determines the amount of light the object is receiving at the point of intersection. The dot product of the surface normal <b>n</b> and the light vector <b>l</b> approximates the angle between the two. The higher the value of the dot product, the more light the surface receives.</p>
+      <hr>
+      <p> Specular: Incorporates a "shininess" component to simulate different types of material (matte finishes vs. glossy) </p>
+      <img src="Images/specular.png" width="180" height="40"></img>
+      <p> <i>k</i> represents the color of the object, <i>I</i> is the color of the light source, and max(0, <b>n</b>·<b>h</b>) determines the amount of light the object is reflecting back toward the viewpoint. The dot product of the surface normal <b>n</b> and the halfway vector <b>h</b> approximates the angle between the two. The higher the value of the dot product, the more light is reflected toward the viewpoint. The value of this dot product is raised to the "shininess" exponent <i>n</i>. Higher values of <i>n</i> correspond to glossier surfaces. </p>
+      <hr>
+      <p> Adding all of these components together produces our complete shading model: </p>
+      <img src="Images/blinnphong.png" width="400" height="40"></img>
+      <p> After determining the object that intersected the ray closest to the viewpoint, we simply plug in the values of the object's material properties and the result produced by our shading model is what we set the pixel color to.</p>
+      <p> Note: Since we are using RGB color values, we actually have to calculate our shading model seperately for each color channel (R, G, and B), then sum the results of each channel to produce the final color. </p>
+
+      <h2> Congratulations </h2>
+      <p> You are now a master ray-tracer! With this technique, you can produce high-quality images of almost any scene you can imagine. Good luck on your ray-tracing journey, and don't forget to take the quiz! </p>
+
+      <h2> Quiz </h2>
+      <p> Answer the following questions based on your knowledge of ray-tracing from this tutorial.</p>
+
+      <h4> 1. Ray-tracing is a technique for which computer graphics operation? </h4>
+      <input type="radio" id="1wrong" name="quiz1"> Line Clipping <br>
+      <input type="radio" id="1wrong" name="quiz1"> Transforming Geometries <br>
+      <input type="radio" id="1right" name="quiz1"> Rendering
+      <p id="answer1"></p>
+
+      <h4> 2. Ray-tracing is well-suited for real-time applications such as video games.</h4>
+      <input type="radio" id="2wrong" name="quiz2"> true <br>
+      <input type="radio" id="2right" name="quiz2"> false
+      <p id="answer2"></p>
+
+      <h4> 3. Ray-tracing is an image-order algorithm </h4>
+      <input type="radio" id="3right" name="quiz3"> true <br>
+      <input type="radio" id="3wrong" name="quiz3"> false
+      <p id="answer3"></p>
+
+      <h4> 4. The steps of ray-tracing, in the correct order, is: </h4>
+      <input type="radio" id="4wrong" name="quiz4"> ray generation -> shading -> ray-object intersection <br>
+      <input type="radio" id="4wrong" name="quiz4"> ray-object intersection -> ray generation -> shading <br>
+      <input type="radio" id="4right" name="quiz4"> ray generation -> ray-object intersection -> shading <br>
+      <input type="radio" id="4wrong" name="quiz4"> shading -> ray-object intersection -> ray generation
+      <p id="answer4"></p>
+
+      <h4> 5. Rays are characterized by what two things? </h4>
+      <input type="radio" id="5right" name="quiz5"> an origin & a direction <br>
+      <input type="radio" id="5wrong" name="quiz5"> a magnitude & a direction <br> 
+      <input type="radio" id="5wrong" name="quiz5"> a start point & an end point <br>
+      <input type="radio" id="5wrong" name="quiz5"> a color & a shininess
+      <p id="answer5"></p>
+
+      <h4> 6. A perspective view means that all rays have the same what? </h4>
+      <input type="radio" id="6wrong" name="quiz6"> direction <br>
+      <input type="radio" id="6right" name="quiz6"> origin <br>
+      <input type="radio" id="6wrong" name="quiz6"> color <br>
+      <input type="radio" id="6wrong" name="quiz6"> magnitude
+      <p id="answer6"></p>
+
+      <h4> 7. An undefined discriminant value means that the object does not intersect the ray. </h4>
+      <input type="radio" id="7right" name="quiz7"> true <br>
+      <input type="radio" id="7wrong" name="quiz7"> false <br>
+      <p id="answer7"></p>
+
+      <h4> 8. Which of the following is not factored into the Blinn-Phong shading model? </h4>
+      <input type="radio" id="8wrong" name="quiz8"> Specular <br>
+      <input type="radio" id="8wrong" name="quiz8"> Diffuse <br>
+      <input type="radio" id="8right" name="quiz8"> Shadows <br>
+      <input type="radio" id="8wrong" name="quiz8"> Ambient <br>
+      <p id="answer8"></p>
+
+      <br>
+      <button onclick="checkQuiz()"> Check answers </button>
+      <p id="answers"> </p>
+
+      <script type="text/javascript" src="raytracing.js"></script>
+    </div>
+  </body>
+</html>
